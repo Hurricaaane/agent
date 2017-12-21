@@ -2,6 +2,7 @@ import { Component, EventEmitter, Input, Output, ChangeDetectionStrategy } from 
 import { KeyAction } from 'uhk-common';
 
 import { SvgKeyboardKey } from '../keys';
+import {ClipboardService} from '../../../services/clipboard.service';
 
 @Component({
     selector: 'g[svg-module]',
@@ -15,13 +16,14 @@ export class SvgModuleComponent {
     @Input() keyActions: KeyAction[];
     @Input() selectedKey: { layerId: number, moduleId: number, keyId: number };
     @Input() selected: boolean;
+    @Input() moduleId: number;
     @Input() keybindAnimationEnabled: boolean;
     @Input() capturingEnabled: boolean;
     @Output() keyClick = new EventEmitter();
     @Output() keyHover = new EventEmitter();
     @Output() capture = new EventEmitter();
 
-    constructor() {
+    constructor(public clipboard: ClipboardService) {
         this.keyboardKeys = [];
     }
 

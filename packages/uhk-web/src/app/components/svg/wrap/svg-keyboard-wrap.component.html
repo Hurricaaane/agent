@@ -1,5 +1,20 @@
 <ng-template [ngIf]="layers">
     <layers [class.disabled]="popoverShown" (select)="selectLayer($event.index)" [current]="currentLayer"></layers>
+    <div class="">
+        <h4>
+            <label><input type="checkbox" [(ngModel)]="clipboard.isSelectionModeEnabled"> Selection mode
+                <span *ngIf="clipboard.countSelected() > 0 || clipboard.countCopied() > 0">(
+                    <span *ngIf="clipboard.countSelected() > 0">{{clipboard.countSelected()}} selected</span><span *ngIf="clipboard.countSelected() > 0 && clipboard.countCopied() > 0">, </span>
+                    <span *ngIf="clipboard.countCopied() > 0">{{clipboard.countCopied()}} copied</span>
+                )</span>
+            </label>
+            <div>
+                <button class="btn btn-default" [disabled]="!clipboard.hasContent()" (click)="clearClipboard()">Clear clipboard</button>
+                <button class="btn btn-default" [disabled]="clipboard.countSelected() === 0" (click)="copyToClipboard()">Copy</button>
+                <button class="btn btn-default" [disabled]="!clipboard.hasContent()" (click)="paste()">Paste</button>
+            </div>
+        </h4>
+    </div>
     <keyboard-slider [layers]="layers"
                      [currentLayer]="currentLayer"
                      [keybindAnimationEnabled]="keybindAnimationEnabled"

@@ -55,6 +55,12 @@ enum LabelTypes {
             transition('1 => *', animate('200ms')),
             transition('* => 1', animate('0ms')) // Instant color to blue
         ]),
+        trigger('clipboardSelected', [
+            // http://colorblendy.com/#!/multiply/4099e5/cccccc
+            state('1', style({ stroke: '#4099e5', 'stroke-width': 10 })), // Signature blue color blending
+            transition('1 => *', animate('200ms')),
+            transition('* => 1', animate('0ms')) // Instant color to blue
+        ]),
         trigger('recording', [
             state('inactive', style({
                 fill: 'rgba(204, 0, 0, 1)'
@@ -80,6 +86,7 @@ export class SvgKeyboardKeyComponent implements OnInit, OnChanges, OnDestroy {
     @Input() keybindAnimationEnabled: boolean;
     @Input() capturingEnabled: boolean;
     @Input() active: boolean;
+    @Input() clipboardSelected: boolean;
 
     @Output() keyClick = new EventEmitter();
     @Output() capture = new EventEmitter();

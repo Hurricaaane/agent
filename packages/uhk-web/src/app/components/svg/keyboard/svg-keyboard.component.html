@@ -9,6 +9,7 @@
             [selectedKey]="selectedKey"
             [@split]="moduleAnimationStates[i]"
             [selected]="selectedKey?.moduleId === i"
+            [moduleId]="i"
             (keyClick)="onKeyClick(i, $event.index, $event.keyTarget)"
             (keyHover)="onKeyHover($event.index, $event.event, $event.over, i)"
             (capture)="onCapture(i, $event.index, $event.captured)"

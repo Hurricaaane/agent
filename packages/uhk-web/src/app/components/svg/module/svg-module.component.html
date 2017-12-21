@@ -10,6 +10,7 @@
             [attr.tabindex]="0"
             [keyAction]="keyActions[i]"
             [active]="selected && i == selectedKey.keyId"
+            [clipboardSelected]="clipboard.isSelectionModeEnabled && clipboard.isSelected(moduleId, i)"
             [keybindAnimationEnabled]="keybindAnimationEnabled"
             [capturingEnabled]="capturingEnabled"
             (keyClick)="onKeyClick(i, $event)"

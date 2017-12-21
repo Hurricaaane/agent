@@ -38,6 +38,7 @@ import { AppState } from '../../../store';
 import { KeymapActions } from '../../../store/actions';
 import { PopoverComponent } from '../../popover';
 import { KeyboardLayout } from '../../../keyboard/keyboard-layout.enum';
+import {ClipboardService} from '../../../services/clipboard.service';
 
 interface NameValuePair {
     name: string;
@@ -81,7 +82,8 @@ export class SvgKeyboardWrapComponent implements OnInit, OnChanges {
         private store: Store<AppState>,
         private mapper: MapperService,
         private element: ElementRef,
-        private renderer: Renderer
+        private renderer: Renderer,
+        public clipboard: ClipboardService
     ) {
         this.keyEditConfig = {
             moduleId: undefined,
@@ -133,15 +135,19 @@ export class SvgKeyboardWrapComponent implements OnInit, OnChanges {
     }
 
     onKeyClick(moduleId: number, keyId: number, keyTarget: HTMLElement): void {
-        if (!this.popoverShown && this.popoverEnabled) {
-            this.keyEditConfig = {
-                moduleId,
-                keyId
-            };
-            this.selectedKey = { layerId: this.currentLayer, moduleId, keyId };
-            const keyActionToEdit: KeyAction = this.layers[this.currentLayer].modules[moduleId].keyActions[keyId];
-            this.keyElement = keyTarget;
-            this.showPopover(keyActionToEdit);
+        if (!this.isSelectionMode()) {
+            if (!this.popoverShown && this.popoverEnabled) {
+                this.keyEditConfig = {
+                    moduleId,
+                    keyId
+                };
+                this.selectedKey = { layerId: this.currentLayer, moduleId, keyId };
+                const keyActionToEdit: KeyAction = this.layers[this.currentLayer].modules[moduleId].keyActions[keyId];
+                this.keyElement = keyTarget;
+                this.showPopover(keyActionToEdit);
+            }
+        } else {
+            this.clipboard.toggle(moduleId, keyId);
         }
     }
 
@@ -235,6 +241,22 @@ export class SvgKeyboardWrapComponent implements OnInit, OnChanges {
 
     getSelectedLayer(): number {
         return this.currentLayer;
+    }
+
+    isSelectionMode(): boolean {
+        return this.clipboard.isSelectionModeEnabled;
+    }
+
+    clearClipboard(): void {
+        this.clipboard.clear();
+    }
+
+    copyToClipboard(): void {
+        this.clipboard.copySelectionOutOf(this.keymap.layers[this.currentLayer]);
+    }
+
+    paste(): void {
+        this.clipboard.pasteInto(this.keymap.layers[this.currentLayer]);
     }
 
     private getKeyActionContent(keyAction: KeyAction): Observable<NameValuePair[]> {

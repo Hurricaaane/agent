@@ -98,6 +98,7 @@ import { LoadingDevicePageComponent } from './pages/loading-page/loading-device.
 import { UhkDeviceLoadingGuard } from './services/uhk-device-loading.guard';
 import { UhkDeviceLoadedGuard } from './services/uhk-device-loaded.guard';
 import { XtermComponent } from './components/xterm/xterm.component';
+import {ClipboardService} from './services/clipboard.service';
 
 @NgModule({
     declarations: [
@@ -192,6 +193,7 @@ import { XtermComponent } from './components/xterm/xterm.component';
         AppRendererService,
         IpcCommonRenderer,
         DeviceRendererService,
+        ClipboardService,
         UhkDeviceConnectedGuard,
         UhkDeviceDisconnectedGuard,
         UhkDeviceInitializedGuard,
