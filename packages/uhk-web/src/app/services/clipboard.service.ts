@@ -2,7 +2,10 @@ import {Injectable} from '@angular/core';
 import {Layer} from 'uhk-common/src/config-serializer/config-items/layer';
 import {KeyAction} from 'uhk-common/src/config-serializer/config-items/key-action/key-action';
 import {KeystrokeAction} from 'uhk-common/src/config-serializer/config-items/key-action/keystroke-action';
-import {SwitchLayerAction} from 'uhk-common/src/config-serializer/config-items/key-action/switch-layer-action';
+import {
+    LayerName,
+    SwitchLayerAction
+} from 'uhk-common/src/config-serializer/config-items/key-action/switch-layer-action';
 import {PlayMacroAction} from 'uhk-common/src/config-serializer/config-items/key-action/play-macro-action';
 import {MouseAction} from 'uhk-common/src/config-serializer/config-items/key-action/mouse-action';
 import {
@@ -15,7 +18,8 @@ import {NoneAction} from 'uhk-common/src/config-serializer/config-items/key-acti
 export class ClipboardService {
     public isSelectionModeEnabled: boolean;
     private selected: object = {};
-    private content: object;
+    private selectedCount: number;
+    private content: object | undefined;
     private contentCount: number;
 
     constructor() {
@@ -26,6 +30,7 @@ export class ClipboardService {
             this.selected[moduleId] = {};
         }
         this.selected[moduleId][keyId] = !this.selected[moduleId][keyId];
+        this.selectedCount = this.countSelected();
     }
 
     isSelected(moduleId: number, keyId: number) {
@@ -36,7 +41,7 @@ export class ClipboardService {
         return this.selected[moduleId][keyId];
     }
 
-    countSelected(): number {
+    private countSelected(): number {
         let c = 0;
         for (let moduleId in this.selected) {
             for (let keyId in this.selected[moduleId] as any) {
@@ -56,7 +61,6 @@ export class ClipboardService {
         for (let moduleId in this.selected) {
             for (let keyId in this.selected[moduleId] as any) {
                 if (this.selected[moduleId][keyId]) {
-                    // FIXME: Having something selected does not necessarily mean something exists in the current layer.
                     let keyAction = ClipboardService.cloneKeyAction(layer.modules[moduleId].keyActions[keyId]);
                     if (!stencil[moduleId]) {
                         stencil[moduleId] = {};
@@ -71,20 +75,19 @@ export class ClipboardService {
         this.contentCount = count;
     }
 
-    pasteInto(layer: Layer) {
-        console.log("a")
+    pasteInto(layer: Layer, layerNumber: number) {
         for (let moduleId in this.content) {
-            console.log("b")
             if (layer.modules[moduleId]) {
-                console.log("c")
                 for (let keyId in this.content[moduleId] as any) {
-                    console.log("d")
-                    // if (layer.modules[moduleId].keyActions[keyId] !== undefined) {
-                        console.log("e")
-                        console.log(layer.modules[moduleId].keyActions[keyId])
-                        console.log(this.content[moduleId][keyId])
-                        layer.modules[moduleId].keyActions[keyId] = ClipboardService.cloneKeyAction(this.content[moduleId][keyId]);
-                    // }
+                    let keyAction = ClipboardService.cloneKeyAction(this.content[moduleId][keyId]);
+                    if (layerNumber !== 0 && keyAction.getName() === "SwitchLayerAction") {
+                        let switchLayerAction = keyAction as SwitchLayerAction;
+                        if (switchLayerAction.layer !== layerNumber - 1) {
+                            keyAction = new NoneAction();
+                        }
+                    }
+
+                    layer.modules[moduleId].keyActions[keyId] = keyAction;
                 }
             }
         }

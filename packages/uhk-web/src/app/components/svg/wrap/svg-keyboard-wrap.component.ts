@@ -256,7 +256,7 @@ export class SvgKeyboardWrapComponent implements OnInit, OnChanges {
     }
 
     paste(): void {
-        this.clipboard.pasteInto(this.keymap.layers[this.currentLayer]);
+        this.clipboard.pasteInto(this.keymap.layers[this.currentLayer], this.currentLayer);
     }
 
     private getKeyActionContent(keyAction: KeyAction): Observable<NameValuePair[]> {
