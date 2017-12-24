@@ -4,7 +4,7 @@
     [attr.text-anchor]="'middle'">
          <tspan
                 *ngFor="let text of texts; let index = index"
-                [attr.x]="spanX"
+                [attr.x]="spanXs[index]"
                 [attr.y]="spanYs[index]"
                 dy="0"
                 >{{ text }}</tspan>
