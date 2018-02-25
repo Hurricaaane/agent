@@ -20,6 +20,7 @@ export interface SymOverride {
 export interface SymGroup {
     type: string;
     label: string;
+    orderFn: (a: Symcode, b: Symcode) => number;
 }
 
 export const usingSymcodes = function (stencil: SymcodeLocale) {
@@ -39,6 +40,13 @@ export const usingSymcodes = function (stencil: SymcodeLocale) {
     }
 
     return copy;
+};
+
+const compById = function (a, b) {
+    return a.id < b.id ? -1 : a.id === b.id ? 0 : 1;
+};
+const compByLabel = function (a, b) {
+    return a.labels[0] < b.labels[0] ? -1 : a.labels[0] === b.labels[0] ? 0 : 1;
 };
 
 const base: SymcodeLocale = {
@@ -275,16 +283,16 @@ const base: SymcodeLocale = {
         {from: 222, to: 52, reason: 'Single quote'}
     ],
     groups: [
-        {type: 'unassigned', label: 'None'},
-        {type: 'letter', label: 'Letter'},
-        {type: 'digit', label: 'Number'},
-        {type: 'symbol', label: 'Symbol'},
-        {type: 'whitespace', label: 'Whitespace'},
-        {type: 'misc', label: 'Misc'},
-        {type: 'function', label: 'Function'},
-        {type: 'navigation', label: 'Navigation'},
-        {type: 'media', label: 'Media'},
-        {type: 'launch-app', label: 'Launch Application'},
-        {type: 'system', label: 'System'}
+        {type: 'unassigned', label: 'None', orderFn: compById },
+        {type: 'letter', label: 'Letter', orderFn: compByLabel },
+        {type: 'digit', label: 'Number', orderFn: compByLabel },
+        {type: 'symbol', label: 'Symbol', orderFn: compById },
+        {type: 'whitespace', label: 'Whitespace', orderFn: compById },
+        {type: 'misc', label: 'Misc', orderFn: compById },
+        {type: 'function', label: 'Function', orderFn: compById },
+        {type: 'navigation', label: 'Navigation', orderFn: compById },
+        {type: 'media', label: 'Media', orderFn: compById },
+        {type: 'launch-app', label: 'Launch Application', orderFn: compById },
+        {type: 'system', label: 'System', orderFn: compById }
     ]
 };
