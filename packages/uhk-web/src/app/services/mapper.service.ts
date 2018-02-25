@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { KeystrokeType } from 'uhk-common';
-import {scancodes} from '../locales/scancodes/scancodes.fr';
+import { scancodesCommon, SymcodeLocale } from '../locales/scancodes/scancodes.common';
+import { scancodes } from '../locales/scancodes/scancodes.fr';
 
 @Injectable()
 export class MapperService {
@@ -92,20 +93,34 @@ export class MapperService {
     }
 
     private initScanCodeTextMap(): void {
+        const keymap = this.mergeScancodes(scancodesCommon, scancodes);
+
         this.basicScanCodeTextMap = new Map<number, string[]>();
-        for (let i of scancodes.items.filter(value => !value.types.includes("media") && !value.types.includes("system"))) {
-            this.basicScanCodeTextMap.set(i.id, i.labels);
+        for (const it of keymap.items.filter(value => !value.types.includes('media') && !value.types.includes('system'))) {
+            this.basicScanCodeTextMap.set(it.id, it.labels);
         }
 
         this.mediaScanCodeTextMap = new Map<number, string[]>();
-        for (let i of scancodes.items.filter(value => value.types.includes("media"))) {
-            this.basicScanCodeTextMap.set(i.id, i.labels);
+        for (const it of keymap.items.filter(value => value.types.includes('media'))) {
+            this.basicScanCodeTextMap.set(it.id, it.labels);
         }
 
         this.sytemScanCodeTextMap = new Map<number, string[]>();
-        for (let i of scancodes.items.filter(value => value.types.includes("system"))) {
-            this.basicScanCodeTextMap.set(i.id, i.labels);
+        for (const it of keymap.items.filter(value => value.types.includes('system'))) {
+            this.basicScanCodeTextMap.set(it.id, it.labels);
         }
+    }
+
+    private mergeScancodes(base, stencil) {
+        const copy = Object.assign({}, stencil) as SymcodeLocale;
+
+        for (const it of base.items) {
+            if (!copy.items.some(value => value.id === it.id)) {
+                copy.items.push(Object.assign({}, it));
+            }
+        }
+
+        return copy;
     }
 
     private initScancodeIcons(): void {
