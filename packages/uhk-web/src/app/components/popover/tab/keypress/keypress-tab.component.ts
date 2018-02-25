@@ -57,12 +57,14 @@ export class KeypressTabComponent extends Tab implements OnChanges {
         return symcodeLocale.groups
             .map(group => ({
                 text: group.label,
-                children: this.whereBy(symcodeLocale, group.type)
+                children: this.whereBy(symcodeLocale, group.type, group.orderFn)
             } as Select2OptionData));
     }
 
-    whereBy(symcodeLocale: SymcodeLocale, type: string): Select2OptionData[] {
-        return symcodeLocale.items.filter(value => value.types.includes(type)).map(this.toGroupChildren);
+    whereBy(symcodeLocale: SymcodeLocale, type: string, orderFn: ((a: Symcode, b: Symcode) => number)): Select2OptionData[] {
+        return symcodeLocale.items.filter(value => value.types.includes(type))
+            .sort(orderFn)
+            .map(this.toGroupChildren);
     }
 
     toGroupChildren(value: Symcode): Select2OptionData {
