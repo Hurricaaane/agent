@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { KeystrokeType } from 'uhk-common';
-import { scancodesCommon, SymcodeLocale } from '../locales/scancodes/scancodes.common';
-import { scancodes } from '../locales/scancodes/scancodes.fr';
+import { ScancodeLayoutLocalizationService } from './scancode-layout-localization.service';
 
 @Injectable()
 export class MapperService {
@@ -15,7 +14,7 @@ export class MapperService {
     private systemScancodeIcons: Map<number, string>;
     private nameToFileName: Map<string, string>;
 
-    constructor() {
+    constructor(private scancodeLayoutLocalizationService: ScancodeLayoutLocalizationService) {
         this.initScanCodeTextMap();
         this.initScancodeIcons();
         this.initNameToFileNames();
@@ -93,7 +92,7 @@ export class MapperService {
     }
 
     private initScanCodeTextMap(): void {
-        const keymap = this.mergeScancodes(scancodesCommon, scancodes);
+        const keymap = this.scancodeLayoutLocalizationService.getLocalizedLayout();
 
         this.basicScanCodeTextMap = new Map<number, string[]>();
         for (const it of keymap.items.filter(value => !value.types.includes('media') && !value.types.includes('system'))) {
@@ -109,18 +108,6 @@ export class MapperService {
         for (const it of keymap.items.filter(value => value.types.includes('system'))) {
             this.basicScanCodeTextMap.set(it.id, it.labels);
         }
-    }
-
-    private mergeScancodes(base, stencil) {
-        const copy = Object.assign({}, stencil) as SymcodeLocale;
-
-        for (const it of base.items) {
-            if (!copy.items.some(value => value.id === it.id)) {
-                copy.items.push(Object.assign({}, it));
-            }
-        }
-
-        return copy;
     }
 
     private initScancodeIcons(): void {

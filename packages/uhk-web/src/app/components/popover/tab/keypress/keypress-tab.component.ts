@@ -4,6 +4,8 @@ import { KeyAction, KeystrokeAction, KeystrokeType, SCANCODES, SECONDARY_ROLES }
 
 import { Tab } from '../tab';
 import { MapperService } from '../../../../services/mapper.service';
+import { Symcode, SymcodeLocale } from '../../../../locales/scancodes/scancodes.common';
+import { ScancodeLayoutLocalizationService } from '../../../../services/scancode-layout-localization.service';
 
 @Component({
     selector: 'keypress-tab',
@@ -27,15 +29,11 @@ export class KeypressTabComponent extends Tab implements OnChanges {
     selectedScancodeOption: Select2OptionData;
     selectedSecondaryRoleIndex: number;
 
-    constructor(private mapper: MapperService) {
+    constructor(private mapper: MapperService, private scancodeLayoutLocalizationService: ScancodeLayoutLocalizationService) {
         super();
         this.leftModifiers = ['LShift', 'LCtrl', 'LSuper', 'LAlt'];
         this.rightModifiers = ['RShift', 'RCtrl', 'RSuper', 'RAlt'];
-        this.scanCodeGroups = [{
-            id: '0',
-            text: 'None'
-        }];
-        this.scanCodeGroups = this.scanCodeGroups.concat(SCANCODES);
+        this.scanCodeGroups = this.toScanCodeGroups(scancodeLayoutLocalizationService.getLocalizedLayout());
         this.secondaryRoleGroups = SECONDARY_ROLES;
         this.leftModifierSelects = Array(this.leftModifiers.length).fill(false);
         this.rightModifierSelects = Array(this.rightModifiers.length).fill(false);
@@ -53,6 +51,25 @@ export class KeypressTabComponent extends Tab implements OnChanges {
                 return found;
             }
         };
+    }
+
+    toScanCodeGroups(symcodeLocale: SymcodeLocale): Select2OptionData[] {
+        return symcodeLocale.groups
+            .map(group => ({
+                text: group.label,
+                children: this.whereBy(symcodeLocale, group.type)
+            } as Select2OptionData));
+    }
+
+    whereBy(symcodeLocale: SymcodeLocale, type: string): Select2OptionData[] {
+        return symcodeLocale.items.filter(value => value.types.includes(type)).map(this.toGroupChildren);
+    }
+
+    toGroupChildren(value: Symcode): Select2OptionData {
+        return ({
+            id: '' + value.id,
+            text: value.labels.join(' ')
+        } as Select2OptionData);
     }
 
     ngOnChanges() {
