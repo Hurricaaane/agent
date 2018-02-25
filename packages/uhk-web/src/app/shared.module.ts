@@ -103,6 +103,7 @@ import { XtermComponent } from './components/xterm/xterm.component';
 import { SliderWrapperComponent } from './components/slider-wrapper/slider-wrapper.component';
 import { EditableTextComponent } from './components/editable-text/editable-text.component';
 import { Autofocus } from './directives/autofocus/autofocus.directive';
+import { ScancodeLayoutLocalizationService} from './services/scancode-layout-localization.service';
 
 @NgModule({
     declarations: [
@@ -191,6 +192,7 @@ import { Autofocus } from './directives/autofocus/autofocus.directive';
     providers: [
         SvgModuleProviderService,
         MapperService,
+        ScancodeLayoutLocalizationService,
         appRoutingProviders,
         KeymapEditGuard,
         MacroNotFoundGuard,
