@@ -162,7 +162,7 @@ const base: SymcodeLocale = {
         {id: 113, labels: ['F22'], types: ['function']},
         {id: 114, labels: ['F23'], types: ['function']},
         {id: 115, labels: ['F24'], types: ['function']},
-        {id: 118, labels: ['Menu'], types: ['misc']},
+        {id: 101, labels: ['Menu'], types: ['misc']},
         {id: 176, labels: ['00'], types: ['misc']},
         {id: 177, labels: ['000'], types: ['misc']},
 
@@ -240,7 +240,7 @@ const base: SymcodeLocale = {
         {from: 88, to: 27, reason: 'X'},
         {from: 89, to: 28, reason: 'Y'},
         {from: 90, to: 29, reason: 'Z'},
-        {from: 93, to: 118, reason: 'Menu'},
+        {from: 93, to: 101, reason: 'Menu'},
         {from: 96, to: 98, reason: 'Num pad 0'},
         {from: 97, to: 89, reason: 'Num pad 1'},
         {from: 98, to: 90, reason: 'Num pad 2'},
